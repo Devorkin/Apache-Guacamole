@@ -1,0 +1,11 @@
+[mysqld]
+bind-address = 0.0.0.0
+binlog-ignore-db = "mysql"
+log-bin = mysql-bin
+server-id = 99
+skip-host-cache
+skip-name-resolve
+skip-slave-start = off
+general_log = on
+general_log_file = ""
+slow_query_log = on

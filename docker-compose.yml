@@ -1,0 +1,45 @@
+version: "3"
+services: 
+    guacd:
+        environment:
+            #GUACD_LOG_LEVEL: 'debug'
+            GUACD_LOG_LEVEL: 'info'
+        hostname: guacd
+        image: guacamole/guacd
+        restart: always
+        stdin_open: true
+        tty: true
+    
+    guacamole-server:
+        depends_on:
+            - guacamole_db 
+            - guacd
+        environment:
+            GUACD_HOSTNAME: 'guacd'
+            GUACD_PORT: 4822
+            MYSQL_HOSTNAME: 'guacamole_db'
+            MYSQL_DATABASE: 'guacamole_db'
+            MYSQL_USER: 'guacamole'
+            MYSQL_PASSWORD: 'SECRET'
+        hostname: guacamole
+        image: guacamole/guacamole
+        ports:
+            - "8080:8080"
+        restart: always
+        stdin_open: true
+        tty: true
+        # volumes:
+            # - "./guacamole.properties:guacamole.properties:rw"
+                  
+    guacamole_db:
+        environment:
+            MYSQL_ROOT_PASSWORD: 'SECRET'
+        hostname: guacamole_db
+        image: mysql:5.7
+        restart: always
+        stdin_open: true
+        tty: true
+        volumes:
+            - ./guacamole_db_var:/var/lib/mysql
+            - ./guacamole_db_etc:/etc/mysql
+            - ./guacamole_db_initdb:/docker-entrypoint-initdb.d
